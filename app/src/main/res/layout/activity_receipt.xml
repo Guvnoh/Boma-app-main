@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Receipt"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="BOMA INVESTMENT AND RESOURCES LTD"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/rCustomerName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="customer name"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="20dp"/>
+    <TextView
+        android:id="@+id/rDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="date"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:text="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Quantity"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:id="@+id/kwantity"
+            android:layout_marginRight="20dp"
+            android:textSize="18sp"/>
+        <TextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Brand"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:id="@+id/label"
+            android:textSize="18sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:id="@+id/Totallabel"
+            android:layout_marginLeft="10dp"
+            android:textSize="18sp"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+        android:textColor="@color/black"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/receipt_container"/>
+    </ScrollView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+        android:textColor="@color/black"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/rGrandTotalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grand Total: "
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:id="@+id/rGrandTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="120dp"/>
+    </LinearLayout>
+
+</LinearLayout>
