@@ -16,8 +16,11 @@
             android:id="@+id/customerNameCard"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            app:cardCornerRadius="20dp"
-            android:backgroundTint="#0f0fa3">
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="54dp"
+            android:layout_marginRight="8dp"
+            android:backgroundTint="#000000"
+            app:cardCornerRadius="20dp">
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -34,7 +37,9 @@
                     android:background="@color/purple_200"
                     android:gravity="center"
                     android:text="Customer name:"
-                    android:textSize="20sp" />
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/CustomerNameEntry"
@@ -66,13 +71,13 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/sum_view_card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="75dp"
             android:backgroundTint="#271C2E"
             app:cardCornerRadius="30dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <Button

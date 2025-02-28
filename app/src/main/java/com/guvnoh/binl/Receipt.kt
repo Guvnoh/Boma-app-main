@@ -32,23 +32,23 @@ class Receipt : AppCompatActivity() {
         grandTotal = findViewById(R.id.rGrandTotal)
         dateView = findViewById(R.id.rDate)
         dateView.text = "Date/time: " + watTime.format(formattedTime).toString()
-        val customer = intent.getStringExtra("customer_name")
+        val customer = intent.getStringExtra("customer")
 
         ReceiptCardBinding.inflate(layoutInflater)
-        val brand = intent.getStringArrayListExtra("brand_name")
-        val qty = intent.getDoubleArrayExtra("brand_qty")?.toList()
-        val totall = intent.getDoubleArrayExtra("brand_total")?.toList()
+        val receipt = intent.getParcelableArrayListExtra<ReceiptData>("receipt")
         val rData = mutableMapOf<String, MutableList<String>>()
         displayData= mutableListOf()
-        if (totall != null && qty != null && brand != null) {
-            var len = brand.size -1
+        if (receipt != null ) {
+            var len = receipt.size -1
             if (len>=0){
-                while (len>-1){
-                    val productqty = qty[len].toString()
-                    val productname = brand[len]
-                    val producttotal = ("₦" + formatter.format(totall[len]))
-                    rData[productname] = mutableListOf(productqty, producttotal)
-                    len--
+                while (len>-1) {
+                    for (i in receipt) {
+                        val productqty = i.product_qty
+                        val productname = i.product_name
+                        val producttotal = ("₦" + formatter.format(i.product_total.toDouble()))
+                        rData[productname] = mutableListOf(productqty, producttotal)
+                        len--
+                    }
                 }
             }
 
@@ -62,7 +62,7 @@ class Receipt : AppCompatActivity() {
         }
         load(displayData)
 
-        val gtots = intent.getDoubleExtra("GrandTotal", 0.00)
+        val gtots = intent.getDoubleExtra("grandTotal", 0.00)
 
         customerName.text = "customer:  $customer"
         grandTotal.text = "₦" + formatter.format(gtots)

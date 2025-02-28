@@ -61,30 +61,35 @@ class Products : Fragment() {
             clearData() // clears data in all quantity inputs, grand total and customer name
         }
         binding.doneBtn.setOnClickListener {
+            val intent = Intent(requireContext(), Receipt::class.java).apply{
+                val customerNames = binding.CustomerNameEntry.text.toString()
 
-            val receipt = Intent(requireContext(), Receipt::class.java) //opens second activity (receipt)
+                // Lists created for all required data in the receipt activity
+                val brandList = brandNameMap.keys.toMutableList()
+                val qtyList: MutableList<Double> = brandNameMap.values.mapNotNull {
+                    it.firstOrNull()
+                }.toMutableList()
+                val totalList: MutableList<Double> = brandNameMap.values.mapNotNull {
+                    it.getOrNull(1)
+                }.toMutableList()
+                val grandTotal = calculationResults.values.sum()
+                val parcelReceipt: ArrayList<ReceiptData> = arrayListOf()
+                for (n in qtyList.indices){
+                    val name = brandList[n]
+                    val qty = qtyList[n].toString()
+                    val total = totalList[n].toString()
+                    parcelReceipt.add(ReceiptData(qty, name, total))
+                }
+                putParcelableArrayListExtra("receipt", parcelReceipt )
+                putExtra("customer", customerNames)
+                putExtra("grandTotal", grandTotal)
+            }
+            startActivity(intent)
 
-            val customerNames = binding.CustomerNameEntry.text.toString()
-
-            // Lists created for all required data in the receipt activity
-            val brandList = brandNameMap.keys.toMutableList()
-            val qtyList: MutableList<Double> = brandNameMap.values.mapNotNull {
-                it.firstOrNull()
-            }.toMutableList()
-            val totalList: MutableList<Double> = brandNameMap.values.mapNotNull {
-                it.getOrNull(1)
-            }.toMutableList()
-            val grandTotal = calculationResults.values.sum()
-
-            receipt.putExtra("customer_name", customerNames)
-            receipt.putExtra("GrandTotal", grandTotal)
-            receipt.putExtra("brand_qty", ArrayList(qtyList))
-            receipt.putExtra("brand_total", ArrayList(totalList))
-            receipt.putExtra("brand_name", ArrayList(brandList))
-            startActivity(receipt)
         }
-
     }
+
+
     private fun getUpdatedBrandData(context: Context, key: String): MutableMap<String, Product> {
         val sharedPreferences = context.getSharedPreferences("myDB", Context.MODE_PRIVATE)
 
@@ -138,6 +143,7 @@ class Products : Fragment() {
             brandNameMap.remove(cardItemLayoutBinding.brandLabel.text.toString())
         }
         updateGrandTotal()
+        println(brandNameMap)
     }
 
     private fun updateGrandTotal(){
