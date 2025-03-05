@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         replaceFragment(ChangePrice(), "Change Price" )
+        replaceFragment(Products(), "done did it!!")
 
         //setting up navigation logic
         val navView = findViewById<NavigationView>(R.id.navView) //refers to navigation menu (App's side menu)
