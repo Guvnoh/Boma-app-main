@@ -7,6 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.guvnoh.binl.databinding.ChangePriceBinding
@@ -15,6 +20,9 @@ import java.io.FileNotFoundException
 import java.text.DecimalFormat
 
 class ChangePrice : Fragment() {
+//    val dataBase: FirebaseDatabase = FirebaseDatabase.getInstance()
+//    val firstBranch : DatabaseReference = dataBase.reference.child("Boma")
+//    val bomaBrands: DatabaseReference = dataBase.reference.child("Boma").child("brandData")
     private val formatter = DecimalFormat("#,###")
     private lateinit var priceCardsBinding: PriceCardsBinding
     private lateinit var brandData: MutableList<Product>
@@ -81,15 +89,9 @@ class ChangePrice : Fragment() {
             Product("Pop cola (small)", 2600.0, R.drawable.pop_cola),
             Product("Pepsi", 4500.0, R.drawable.pepsi),
         )
-        dataMap = try {
-            getUpdatedBrandData(requireContext(), "displayData")
-        }catch (
-            e: FileNotFoundException
-        ){
-            mutableMapOf()
-        }catch (e: NullPointerException){
-            mutableMapOf()
-        }
+//        getBrandData()
+        dataMap = getUpdatedBrandData(requireContext(), "displayData")
+
         if(dataMap.isNotEmpty()){
             newData = dataMap.values.toMutableList()
 
@@ -106,16 +108,40 @@ class ChangePrice : Fragment() {
             populatePriceCards(display,layoutInflater)
         }
 
+
+
         val done = changePriceBinding.doneChanging
         done.setOnClickListener {
-
             updatePrices(display)
             saveDataBase(requireContext(), "displayData", dataMap)
             populatePriceCards(display,layoutInflater)
-
         }
 
     }
+//    private fun getBrandData(){
+//        bomaBrands.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                for (eachBrand in snapshot.children){
+//                    val brand = eachBrand.getValue(Product::class.java)
+//                    if (brand != null) {
+//                        display.add(brand)
+//                        val size = display.size
+//                    }
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                TODO("Not yet implemented")
+//            }
+//
+//        })
+//    }
+//    private fun updateDatabase(){
+//        bomaBrands.removeValue()
+//        for (n in display){
+//            bomaBrands.child(n.product_name).setValue(n)
+//        }
+//    }
 
     private fun saveDataBase(context: Context, key: String, map: MutableMap<String, Product>) {
         val sharedPreferences = context.getSharedPreferences("myDB", Context.MODE_PRIVATE)
@@ -181,15 +207,6 @@ class ChangePrice : Fragment() {
 
     }
 
-//    private fun createProductCard(product: Product, position: Int): View {
-//        val cardBinding = PriceCardsBinding.inflate(layoutInflater)
-//        with(cardBinding){
-//            brandLabel.text = product.product_name
-//            currentPrice.text = "₦" + formatter.format(product.product_price)
-//            productImage.setImageResource(product.product_image)
-//        }
-//        return  cardBinding.root
-//    }
 
     private fun getUpdatedBrandData(context: Context, key: String): MutableMap<String, Product> {
         val sharedPreferences = context.getSharedPreferences("myDB", Context.MODE_PRIVATE)

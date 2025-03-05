@@ -9,9 +9,11 @@
             android:icon="@drawable/shopping_cart"/>
         <item
             android:id="@+id/change_price"
-            android:title="@string/change_price"/>
+            android:title="@string/change_price"
+            android:icon="@drawable/price_change_svg"/>
         <item
             android:id="@+id/records"
-            android:title="@string/sales_records"/>
+            android:title="@string/sales_records"
+            android:icon="@drawable/records_svg"/>
     </group>
 </menu>

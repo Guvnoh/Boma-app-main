@@ -13,12 +13,12 @@
         android:layout_margin="2dp"
         android:background="@color/white"
         android:padding="5dp"
-        app:cardCornerRadius="20dp">
+        app:cardCornerRadius="10dp">
 
         <RelativeLayout
             android:id="@+id/relative_layout_price"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="#009688">
 
             <ImageView
@@ -37,10 +37,10 @@
                 android:id="@+id/brandLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="13dp"
-                android:layout_toEndOf="@+id/productImage"
+                android:layout_marginStart="77dp"
+                android:layout_marginTop="23dp"
                 android:text="Title"
                 android:textAlignment="center"
                 android:textColor="@color/black"
@@ -48,26 +48,13 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/priceLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="48dp"
-                android:layout_marginEnd="265dp"
-                android:layout_marginBottom="356dp"
-                android:text="Price"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <TextView
                 android:id="@+id/current_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="82dp"
-                android:layout_marginTop="73dp"
+                android:layout_marginStart="77dp"
+                android:layout_marginTop="61dp"
                 android:gravity="center"
                 android:text="₦0.00"
                 android:textColor="@color/black" />

@@ -10,17 +10,28 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
+import android.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.guvnoh.binl.databinding.ActivityMainBinding
 import com.guvnoh.binl.databinding.CardItemLayoutBinding
 import com.guvnoh.binl.databinding.ProductsBinding
+import com.guvnoh.binl.databinding.ProductsLayoutBinding
 import java.io.FileNotFoundException
 import java.text.DecimalFormat
 import kotlin.collections.ArrayList
 
-class Products : Fragment() {
-    private var _binding: ProductsBinding? = null
+class Products : Fragment(R.layout.products_layout) {
+//    val dataBase: FirebaseDatabase = FirebaseDatabase.getInstance()
+//    val bomaBrands: DatabaseReference = dataBase.reference.child("Boma").child("brandData")
+    private var _binding: ProductsLayoutBinding? = null
     private val binding get() = _binding!!
 
     private  val  calculationResults = mutableMapOf<Int, Double>()
@@ -29,31 +40,26 @@ class Products : Fragment() {
     private val formatter = DecimalFormat("#,###")
     private lateinit var dataMap: MutableMap<String, Product>
     private lateinit var updatedBrandData: MutableList<Product>
-    private lateinit var brandData: MutableList<Product>
     private var brandNameMap = mutableMapOf<String, MutableList<Double>>()
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        (activity as? AppCompatActivity)?.supportActionBar?.show()
         // Inflate the layout for this fragment
-        _binding = ProductsBinding.inflate(inflater, container, false)
+        _binding = ProductsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val main = ActivityMainBinding.inflate(layoutInflater)
+        val toolbar: androidx.appcompat.widget.Toolbar = main.toolbar
         updatedBrandData = mutableListOf()
-
-        dataMap = try {
-            getUpdatedBrandData(requireContext(), "displayData")
-        }catch (
-            e: FileNotFoundException
-        ){
-            mutableMapOf()
-        }catch (e: NullPointerException){
-            mutableMapOf()
-        }
+//        getBrandData()
+        dataMap = getUpdatedBrandData(requireContext(), "displayData")
         updatedBrandData = dataMap.values.toMutableList()
-
         loadData(updatedBrandData) // holds a list with all products, images and prices and loads them into cards
 
 
@@ -89,6 +95,23 @@ class Products : Fragment() {
         }
     }
 
+//    private fun getBrandData(){
+//        bomaBrands.addValueEventListener(object : ValueEventListener{
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                for (eachBrand in snapshot.children){
+//                    val brand = eachBrand.getValue(Product::class.java)
+//                    if (brand != null) {
+//                        updatedBrandData.add(brand)
+//                    }
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                TODO("Not yet implemented")
+//            }
+//
+//        })
+//    }
 
     private fun getUpdatedBrandData(context: Context, key: String): MutableMap<String, Product> {
         val sharedPreferences = context.getSharedPreferences("myDB", Context.MODE_PRIVATE)

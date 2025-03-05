@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "1036788853215",
+    "firebase_url": "https://freemann-firms-default-rtdb.firebaseio.com",
+    "project_id": "freemann-firms",
+    "storage_bucket": "freemann-firms.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036788853215:android:cb4340cf04dc0b277cfc6a",
+        "android_client_info": {
+          "package_name": "com.guvnoh.binl"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvT3qj25i69EE63fUFWwDE4XHx-07x7k8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036788853215:android:a91464966917adc97cfc6a",
+        "android_client_info": {
+          "package_name": "com.guvnoh.freemannfirms"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvT3qj25i69EE63fUFWwDE4XHx-07x7k8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

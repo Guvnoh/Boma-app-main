@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter
 class Receipt : AppCompatActivity() {
     private lateinit var customerName: TextView
     private lateinit var dateView: TextView
+    private lateinit var timeView: TextView
     private lateinit var grandTotal: TextView
     private lateinit var displayData: MutableList<ReceiptData>
     private lateinit var receiptBinding: ActivityReceiptBinding
@@ -27,11 +28,14 @@ class Receipt : AppCompatActivity() {
         setContentView(receiptBinding.root)
         val watZoneId = ZoneId.of("Africa/Lagos")
         val watTime = ZonedDateTime.now(watZoneId)
-        val formattedTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+        val formattedDate = DateTimeFormatter.ofPattern("d-MMM-yyyy")
+        val formattedTime = DateTimeFormatter.ofPattern("H:mma")
         customerName = findViewById(R.id.rCustomerName)
         grandTotal = findViewById(R.id.rGrandTotal)
         dateView = findViewById(R.id.rDate)
-        dateView.text = "Date/time: " + watTime.format(formattedTime).toString()
+        timeView = findViewById(R.id.rTime)
+        dateView.text = "Date: " + watTime.format(formattedDate).toString()
+        timeView.text = "Time: " +watTime.format(formattedTime).toString()
         val customer = intent.getStringExtra("customer")
 
         ReceiptCardBinding.inflate(layoutInflater)
@@ -43,7 +47,7 @@ class Receipt : AppCompatActivity() {
             if (len>=0){
                 while (len>-1) {
                     for (i in receipt) {
-                        val productqty = i.product_qty
+                        val productqty = formatNum(i.product_qty.toDouble())
                         val productname = i.product_name
                         val producttotal = ("₦" + formatter.format(i.product_total.toDouble()))
                         rData[productname] = mutableListOf(productqty, producttotal)
@@ -77,6 +81,13 @@ class Receipt : AppCompatActivity() {
 
         }
         return  cardBinding.root
+    }
+    private fun formatNum(value:Double):String{
+        return if (value % 1.0 == 0.0){
+            value.toInt().toString()
+        }else{
+            value.toString()
+        }
     }
     private fun load(display: MutableList<ReceiptData>) {
         display.forEachIndexed { index, product ->
