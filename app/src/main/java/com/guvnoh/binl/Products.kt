@@ -1,6 +1,5 @@
 package com.guvnoh.binl
 
-import android.content.Context
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import com.google.firebase.database.DataSnapshot
@@ -18,19 +16,15 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.guvnoh.binl.databinding.ActivityMainBinding
 import com.guvnoh.binl.databinding.CardItemLayoutBinding
-import com.guvnoh.binl.databinding.ProductsBinding
 import com.guvnoh.binl.databinding.ProductsLayoutBinding
-import java.io.FileNotFoundException
 import java.text.DecimalFormat
 import kotlin.collections.ArrayList
 
 class Products : Fragment(R.layout.products_layout) {
-//    val dataBase: FirebaseDatabase = FirebaseDatabase.getInstance()
-//    val bomaBrands: DatabaseReference = dataBase.reference.child("Boma").child("brandData")
+    private val dataBase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val bomaBrands: DatabaseReference = dataBase.reference.child("Boma").child("bomaPrices")
     private var _binding: ProductsLayoutBinding? = null
     private val binding get() = _binding!!
 
@@ -39,9 +33,10 @@ class Products : Fragment(R.layout.products_layout) {
     private val productTotalList = mutableListOf<Double>()
     private val formatter = DecimalFormat("#,###")
     private lateinit var dataMap: MutableMap<String, Product>
-    private lateinit var updatedBrandData: MutableList<Product>
+    private lateinit var display: MutableList<Product>
     private var brandNameMap = mutableMapOf<String, MutableList<Double>>()
-
+    private lateinit var brandData: MutableList<Product>
+    private lateinit var getDataMap: MutableMap<String, Double>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,14 +49,64 @@ class Products : Fragment(R.layout.products_layout) {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val main = ActivityMainBinding.inflate(layoutInflater)
-        val toolbar: androidx.appcompat.widget.Toolbar = main.toolbar
-        updatedBrandData = mutableListOf()
-//        getBrandData()
-        dataMap = getUpdatedBrandData(requireContext(), "displayData")
-        updatedBrandData = dataMap.values.toMutableList()
-        loadData(updatedBrandData) // holds a list with all products, images and prices and loads them into cards
 
+        display = mutableListOf()
+        brandData = mutableListOf(
+            //coca cola
+            Product("35cl", 3800.0, R.drawable.coke),
+            Product("50cl", 6300.0, R.drawable.coke),
+            //international breweries
+            Product("Budweiser", 9800.0, R.drawable.budweiser),
+            Product("Flying fish", 12500.0, R.drawable.fish),
+            Product("Hero", 8600.0, R.drawable.hero),
+            Product("Trophy", 8700.0, R.drawable.trophy),
+            //NBL
+            Product("Amstel", 13500.0, R.drawable.amstel),
+            Product("Desperados", 15800.0, R.drawable.despy),
+            Product("Gulder", 10000.0, R.drawable.gulder),
+            Product("Heineken", 11500.0, R.drawable.heineken),
+            Product("Legend(big)", 11200.0, R.drawable.legend),
+            Product("Life", 8500.0, R.drawable.life),
+            Product("Maltina", 13200.0, R.drawable.maltina),
+            Product("Radler", 11800.0, R.drawable.radler),
+            Product("Star", 9500.0, R.drawable.star),
+            Product("Tiger", 14000.0, R.drawable.tiger),
+            //Guinness
+            Product("Medium stout", 17500.0, R.drawable.guinness),
+            Product("Small stout", 19500.0, R.drawable.guinness),
+            //Pets & cans
+            Product("Beta Malt", 11000.0, R.drawable.beta_malt),
+            Product("Grand Malt", 11000.0, R.drawable.grand_malt),
+            Product("Amstel can", 13500.0, R.drawable.amstel),
+            Product("Life can", 15000.0, R.drawable.life),
+            Product("Star can", 12500.0, R.drawable.star),
+            Product("Hero can", 10500.0, R.drawable.hero),
+            Product("Trophy can", 9500.0, R.drawable.trophy),
+            Product("Heineken can", 15500.0, R.drawable.heineken),
+            Product("Guinness can", 25000.0, R.drawable.guinness),
+            Product("Bigger boy", 4600.0, R.drawable.coke),
+            Product("Predator", 5200.0, R.drawable.predator),
+            Product("Fearless", 5000.0, R.drawable.fearless),
+            Product("Eva water (big)", 3800.0, R.drawable.eva),
+            Product("Eva water (small)", 2800.0, R.drawable.eva),
+            Product("Aquafina", 2500.0, R.drawable.aquafina),
+            Product("Nutri Milk", 6400.0, R.drawable.nutri_milk),
+            Product("Nutri Yo", 6900.0, R.drawable.nutri_yo),
+            Product("Pop cola (big)", 3700.0, R.drawable.pop_cola),
+            Product("Pop cola (small)", 2600.0, R.drawable.pop_cola),
+            Product("Pepsi", 4500.0, R.drawable.pepsi),
+        )
+
+        getDataMap = mutableMapOf() // placed here to initialize getDataMap
+        //getDataMap will contain prices retrieved from the database with the brands as keys
+        dataMap = mutableMapOf() // will hold brandData list contents as values and the brand name of each entry as key
+        for (i in brandData){
+            dataMap[i.product_name] = i //fills up dataMap with brandData Products ready for new price injection
+        }
+        getBrandPrices() //loads up dataMap with products and database prices ready to send to display
+         //updates display with current data from database
+
+        loadData(display) // holds a list with all products, images and prices and loads them into cards
 
         binding.clearQtys.setOnClickListener {
             clearData() // clears data in all quantity inputs, grand total and customer name
@@ -95,33 +140,44 @@ class Products : Fragment(R.layout.products_layout) {
         }
     }
 
-//    private fun getBrandData(){
-//        bomaBrands.addValueEventListener(object : ValueEventListener{
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                for (eachBrand in snapshot.children){
-//                    val brand = eachBrand.getValue(Product::class.java)
-//                    if (brand != null) {
-//                        updatedBrandData.add(brand)
-//                    }
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                TODO("Not yet implemented")
-//            }
-//
-//        })
-//    }
+    private fun getBrandPrices() {
+        bomaBrands.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                getDataMap.clear()
+                display.clear() // Clear display list before updating
 
-    private fun getUpdatedBrandData(context: Context, key: String): MutableMap<String, Product> {
-        val sharedPreferences = context.getSharedPreferences("myDB", Context.MODE_PRIVATE)
+                for (eachBrand in snapshot.children) {
+                    val brand: String = eachBrand.key.toString()
+                    val brandPrice: Double = eachBrand.value.toString().toDouble()
+                    getDataMap[brand] = brandPrice
 
-        val jsonString = sharedPreferences.getString(key, null)?: return mutableMapOf()
+                    // Update dataMap with new prices
+                    dataMap[brand]?.product_price = brandPrice
+                }
 
-        val gson = Gson()
-        val type = object : TypeToken<MutableMap<String, Product>>() {}.type
-        return gson.fromJson(jsonString, type)
+                // Refill display list with updated prices
+                display.addAll(dataMap.values)
+                if (isAdded && view != null) {
+                    loadData(display)
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error
+            }
+        })
     }
+
+//    private fun getUpdatedBrandData(context: Context, key: String): MutableMap<String, Product> {
+//        val sharedPreferences = context.getSharedPreferences("myDB", Context.MODE_PRIVATE)
+//
+//        val jsonString = sharedPreferences.getString(key, null)?: return mutableMapOf()
+//
+//        val gson = Gson()
+//        val type = object : TypeToken<MutableMap<String, Product>>() {}.type
+//        return gson.fromJson(jsonString, type)
+//    }
     private fun createProductCard(product: Product, position: Int): View {
         val cardBinding = CardItemLayoutBinding.inflate(layoutInflater)
         with(cardBinding){
@@ -166,7 +222,6 @@ class Products : Fragment(R.layout.products_layout) {
             brandNameMap.remove(cardItemLayoutBinding.brandLabel.text.toString())
         }
         updateGrandTotal()
-        println(brandNameMap)
     }
 
     private fun updateGrandTotal(){
@@ -189,10 +244,10 @@ class Products : Fragment(R.layout.products_layout) {
         updateGrandTotal()
     }
     private fun loadData(brandData: MutableList<Product>){
-        this.updatedBrandData
+        this.display
 
         binding.container.removeAllViews()
-        updatedBrandData.forEachIndexed{index, product ->
+        display.forEachIndexed{index, product ->
             val productCard = createProductCard(product, index)
             binding.container.addView(productCard)
         }

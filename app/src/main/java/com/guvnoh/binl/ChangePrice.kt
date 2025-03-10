@@ -1,6 +1,5 @@
 package com.guvnoh.binl
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,38 +11,36 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.guvnoh.binl.databinding.ChangePriceBinding
 import com.guvnoh.binl.databinding.PriceCardsBinding
-import java.io.FileNotFoundException
 import java.text.DecimalFormat
 
 class ChangePrice : Fragment() {
-//    val dataBase: FirebaseDatabase = FirebaseDatabase.getInstance()
-//    val firstBranch : DatabaseReference = dataBase.reference.child("Boma")
-//    val bomaBrands: DatabaseReference = dataBase.reference.child("Boma").child("brandData")
+    val dataBase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    val firstBranch : DatabaseReference = dataBase.reference.child("Boma")
+    val bomaBrands: DatabaseReference = firstBranch.child("bomaPrices")
     private val formatter = DecimalFormat("#,###")
     private lateinit var priceCardsBinding: PriceCardsBinding
     private lateinit var brandData: MutableList<Product>
+    private lateinit var getDataMap: MutableMap<String, Double>
     private lateinit var dataMap: MutableMap<String, Product>
     private lateinit var display: MutableList<Product>
     private var _binding: ChangePriceBinding? = null
     private val changePriceBinding get() = _binding!!
     override fun onCreateView(
+
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = ChangePriceBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
         return changePriceBinding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        var newData: MutableList<Product>
-//        var displayData : MutableList<Product>
+        getDataMap = mutableMapOf()
+        dataMap = mutableMapOf()
+        display = mutableListOf()
         brandData = mutableListOf(
             //coca cola
             Product("35cl", 3800.0, R.drawable.coke),
@@ -89,70 +86,101 @@ class ChangePrice : Fragment() {
             Product("Pop cola (small)", 2600.0, R.drawable.pop_cola),
             Product("Pepsi", 4500.0, R.drawable.pepsi),
         )
-//        getBrandData()
-        dataMap = getUpdatedBrandData(requireContext(), "displayData")
-
-        if(dataMap.isNotEmpty()){
-            newData = dataMap.values.toMutableList()
-
-            display = newData
-            populatePriceCards(display,layoutInflater)
-
-        }else {
-            display = brandData
-            for (i in brandData){
-                dataMap[i.product_name]= i
-            }
-
-            saveDataBase(requireContext(), "displayData", dataMap)
-            populatePriceCards(display,layoutInflater)
+        for (i in brandData){
+            dataMap[i.product_name] = i //fills up dataMap with brandData Products ready for new price injection
         }
-
-
-
+        getBrandPrices() // database prices(updated) retrieved and sent to getDataMap
+        populatePriceCards(display, layoutInflater) //load up display
         val done = changePriceBinding.doneChanging
         done.setOnClickListener {
             updatePrices(display)
-            saveDataBase(requireContext(), "displayData", dataMap)
-            populatePriceCards(display,layoutInflater)
+            updateDatabase()
         }
-
     }
-//    private fun getBrandData(){
+    private fun updatePrices(list: MutableList<Product>) {
+        val container = changePriceBinding.container
+        for (i in 0 until container.childCount) {
+            val cardView = container.getChildAt(i)
+            val newPriceEntry = cardView.findViewById<EditText>(R.id.new_price_Entry)
+            val newPriceText = newPriceEntry.text.toString()
+            if (newPriceText.isNotEmpty()) {
+                val newPrice = newPriceText.toDoubleOrNull()
+                if (newPrice != null) {
+                    priceCardsBinding= PriceCardsBinding.inflate(layoutInflater)
+                    display[i].product_price = newPrice
+                    //updates the brandData with the new price
+                    var pName = display[i].product_name
+                    //updates the price in the UI
+                    priceCardsBinding.currentPrice.text = newPriceText
+
+                }
+            }
+        }
+    }
+//    private fun getBrandPrices(){
+//
 //        bomaBrands.addValueEventListener(object : ValueEventListener {
 //            override fun onDataChange(snapshot: DataSnapshot) {
 //                for (eachBrand in snapshot.children){
-//                    val brand = eachBrand.getValue(Product::class.java)
-//                    if (brand != null) {
-//                        display.add(brand)
-//                        val size = display.size
-//                    }
+//                    val brand: String = eachBrand.key.toString()
+//                    val brandPrice: Double = eachBrand.value.toString().toDouble()
+//                    getDataMap[brand] = brandPrice
+//                    dataMap[brand]?.product_price  = brandPrice
 //                }
 //            }
-//
 //            override fun onCancelled(error: DatabaseError) {
 //                TODO("Not yet implemented")
 //            }
 //
 //        })
+//        display = mutableListOf()
+//        for (x in dataMap.values){
+//            display.add(x) // sends updated product data back into original brandData list for display
+//        }
 //    }
 //    private fun updateDatabase(){
 //        bomaBrands.removeValue()
 //        for (n in display){
-//            bomaBrands.child(n.product_name).setValue(n)
+//            bomaBrands.child(n.product_name).setValue(n.product_price)
 //        }
 //    }
-
-    private fun saveDataBase(context: Context, key: String, map: MutableMap<String, Product>) {
-        val sharedPreferences = context.getSharedPreferences("myDB", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val gson = Gson()
-        val jsonString = gson.toJson(map)
-
-        editor.putString(key, jsonString)
-        editor.apply()
-
+    private fun updateDatabase() {
+        for (n in display) {
+            bomaBrands.child(n.product_name).setValue(n.product_price)
+        }
     }
+
+    private fun getBrandPrices() {
+        bomaBrands.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                getDataMap.clear()
+                display.clear() // Clear display list before updating
+
+                for (eachBrand in snapshot.children) {
+                    val brand: String = eachBrand.key.toString()
+                    val brandPrice: Double = eachBrand.value.toString().toDouble()
+                    getDataMap[brand] = brandPrice
+
+                    // Update dataMap with new prices
+                    dataMap[brand]?.product_price = brandPrice
+                }
+
+                // Refill display list with updated prices
+                display.addAll(dataMap.values)
+
+                // Refresh the UI now that display is updated
+                if (isAdded && view != null) {
+                    populatePriceCards(display, layoutInflater)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error
+            }
+        })
+    }
+
+
 
     private fun populatePriceCards(list: MutableList<Product>, inflater: LayoutInflater): View {
         val container = changePriceBinding.container
@@ -172,50 +200,6 @@ class ChangePrice : Fragment() {
             container.addView(productCard)
         }
         return container
-    }
-
-
-
-    private fun updatePrices(list: MutableList<Product>) {
-        val container = changePriceBinding.container
-
-        for (i in 0 until container.childCount) {
-            val cardView = container.getChildAt(i)
-
-            val newPriceEntry = cardView.findViewById<EditText>(R.id.new_price_Entry)
-            val newPriceText = newPriceEntry.text.toString()
-
-            if (newPriceText.isNotEmpty()) {
-                val newPrice = newPriceText.toDoubleOrNull()
-                if (newPrice != null) {
-                    priceCardsBinding= PriceCardsBinding.inflate(layoutInflater)
-                    brandData[i].product_price = newPrice
-                    //updates the brandData with the new price
-                    var pName = brandData[i].product_name
-                    //updates the price in the UI
-                    priceCardsBinding.currentPrice.text = newPriceText
-                    //saves the new prices to the datamap
-                    dataMap[pName] = Product(pName, newPrice, brandData[i].product_image)
-                    display = mutableListOf()
-                    display = dataMap.values.toMutableList()
-                    display = brandData
-                }
-
-            }
-        }
-        // Refresh UI
-
-    }
-
-
-    private fun getUpdatedBrandData(context: Context, key: String): MutableMap<String, Product> {
-        val sharedPreferences = context.getSharedPreferences("myDB", Context.MODE_PRIVATE)
-
-        val jsonString = sharedPreferences.getString(key, null)?: return mutableMapOf()
-
-        val gson = Gson()
-        val type = object : TypeToken<MutableMap<String, Product>>() {}.type
-        return gson.fromJson(jsonString, type)
     }
 }
 
