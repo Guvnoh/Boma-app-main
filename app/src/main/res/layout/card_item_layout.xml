@@ -89,17 +89,17 @@
                 android:text="₦0.00"
                 android:textColor="@color/black" />
 
-            <TextView
-                android:id="@+id/quantityLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="35dp"
-                android:layout_marginEnd="46dp"
-                android:gravity="center"
-                android:text="Quantity"
-                android:textColor="@color/black" />
+<!--            <TextView-->
+<!--                android:id="@+id/quantityLabel"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_alignParentTop="true"-->
+<!--                android:layout_alignParentEnd="true"-->
+<!--                android:layout_marginTop="35dp"-->
+<!--                android:layout_marginEnd="46dp"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Quantity"-->
+<!--                android:textColor="@color/black" />-->
 
             <EditText
                 android:id="@+id/quantityEntry"
@@ -112,8 +112,11 @@
                 android:inputType="number|numberDecimal"
                 android:padding="5dp"
                 android:textColor="#000000"
-                android:textColorHint="#000000"
-                android:textStyle="italic" />
+                android:textColorHint="@color/teal_700"
+                android:hint="0"
+                android:textStyle="italic"
+                android:background="@drawable/product_edit_text"/>
+
 
         </RelativeLayout>
 

@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#b87333"
+            android:background="#352f44"
             android:clipToOutline="true"
             android:gravity="center"
             android:text="Customer name:"
@@ -51,7 +51,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/clear_qtys"
-            android:background="#5d4037">
+            android:background="#2a2438">
 
             <LinearLayout
                 android:id="@+id/container"
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:backgroundTint="#b87333"
+            android:backgroundTint="#5c5470"
             android:padding="10dp"
             android:text="Clear"
             android:textSize="18sp"/>
@@ -90,7 +90,7 @@
             android:id="@+id/done_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#b87333"
+            android:backgroundTint="#5c5470"
             android:text="Done"
             android:textSize="18sp"
             android:padding="10dp"

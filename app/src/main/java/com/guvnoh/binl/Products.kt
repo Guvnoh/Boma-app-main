@@ -169,15 +169,6 @@ class Products : Fragment(R.layout.products_layout) {
         })
     }
 
-//    private fun getUpdatedBrandData(context: Context, key: String): MutableMap<String, Product> {
-//        val sharedPreferences = context.getSharedPreferences("myDB", Context.MODE_PRIVATE)
-//
-//        val jsonString = sharedPreferences.getString(key, null)?: return mutableMapOf()
-//
-//        val gson = Gson()
-//        val type = object : TypeToken<MutableMap<String, Product>>() {}.type
-//        return gson.fromJson(jsonString, type)
-//    }
     private fun createProductCard(product: Product, position: Int): View {
         val cardBinding = CardItemLayoutBinding.inflate(layoutInflater)
         with(cardBinding){
@@ -233,13 +224,14 @@ class Products : Fragment(R.layout.products_layout) {
         }
     }
     private fun clearData(){
+        val customerName: EditText = binding.CustomerNameEntry
+        customerName.text?.clear()
         calculationResults.clear()
         binding.container.children.forEach { view ->
             val cardItemLayoutBinding = CardItemLayoutBinding.bind(view)
             cardItemLayoutBinding.quantityEntry.text?.clear()
             cardItemLayoutBinding.individualTotalLabel.text = "₦0.00"
-            val customerName: EditText = binding.CustomerNameEntry
-            customerName.text?.clear()
+
         }
         updateGrandTotal()
     }

@@ -43,7 +43,8 @@ android {
 }
 
 dependencies {
-    implementation ("com.google.code.gson:gson:2.11.0")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation (libs.gson)
     implementation(libs.androidx.drawerlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
