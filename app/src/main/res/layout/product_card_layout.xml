@@ -20,7 +20,7 @@
             android:id="@+id/relative_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#f5f5dc">
+            android:background="@color/white">
 
             <ImageView
                 android:id="@+id/productImage"
@@ -115,7 +115,7 @@
                 android:textColorHint="@color/teal_700"
                 android:hint="0"
                 android:textStyle="italic"
-                android:background="@drawable/product_edit_text"/>
+                android:background="@drawable/rounded_corner_edit_text"/>
 
 
         </RelativeLayout>

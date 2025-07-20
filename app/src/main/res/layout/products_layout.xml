@@ -7,51 +7,56 @@
     android:fitsSystemWindows="true"
     android:background="@android:color/transparent"
     android:backgroundTint="@android:color/transparent"
-    tools:context=".Products">
+    tools:context=".pages.Products">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent">
 
-        <TextView
-            android:id="@+id/customerNameLabel"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/topConstraint"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#352f44"
-            android:clipToOutline="true"
-            android:gravity="center"
-            android:text="Customer name:"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="10dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent">
 
-        <EditText
-            android:id="@+id/CustomerNameEntry"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:gravity="center"
-            android:background="@null"
-            android:hint="Enter name"
-            android:padding="10dp"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/customerNameLabel"
-            app:layout_constraintTop_toTopOf="parent"/>
+            <ImageView
+                android:id="@+id/profile_svg"
+                android:layout_width="73dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/account_svg"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/CustomerNameEntry"
+                android:layout_width="257dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="4dp"
+                android:background="@null"
+                android:fontFamily="monospace"
+                android:gravity="start"
+                android:hint="Enter name"
+                android:inputType="textPersonName"
+                android:minWidth="250dp"
+                android:padding="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.191"
+                app:layout_constraintStart_toEndOf="@id/profile_svg"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ScrollView
             android:id="@+id/scrollView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/CustomerNameEntry"
-            app:layout_constraintStart_toStartOf="parent"
+            android:background="#2a2438"
+            app:layout_constraintBottom_toTopOf="@id/bottomConstraint"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/clear_qtys"
-            android:background="#2a2438">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topConstraint">
 
             <LinearLayout
                 android:id="@+id/container"
@@ -59,43 +64,51 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
         </ScrollView>
-        <Button
-            android:id="@+id/clear_qtys"
-            android:layout_width="wrap_content"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottomConstraint"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:backgroundTint="#5c5470"
-            android:padding="10dp"
-            android:text="Clear"
-            android:textSize="18sp"/>
+            app:layout_constraintBottom_toBottomOf="parent">
+            <Button
+                android:id="@+id/clear_qtys"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:backgroundTint="@color/button"
+                android:padding="10dp"
+                android:text="Clear"
+                android:textSize="18sp"/>
 
-        <TextView
-            android:id="@+id/sum_view"
-            android:layout_width="232dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Grand total: ₦0.00"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:background="#f5f5dc"
-            android:textSize="18dp"
-            android:padding="10dp"
-            android:layout_marginBottom="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <TextView
+                android:id="@+id/sum_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Grand total: ₦0.00"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:background="#f5f5dc"
+                android:textSize="18dp"
+                android:padding="10dp"
+                android:layout_marginBottom="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
-        <Button
-            android:id="@+id/done_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#5c5470"
-            android:text="Done"
-            android:textSize="18sp"
-            android:padding="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <Button
+                android:id="@+id/done_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/button"
+                android:text="Done"
+                android:textSize="18sp"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>

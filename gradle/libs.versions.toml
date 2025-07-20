@@ -1,5 +1,6 @@
 [versions]
 agp = "8.8.2"
+circleimageview = "3.1.0"
 gson = "2.11.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
@@ -12,6 +13,7 @@ composeBom = "2024.04.01"
 appcompat = "1.7.0"
 drawerlayout = "1.2.0"
 constraintlayout = "2.2.0"
+lifecycleViewmodelKtx = "2.9.1"
 recyclerview = "1.4.0"
 material = "1.12.0"
 cardview = "1.0.0"
@@ -19,9 +21,16 @@ legacySupportV4 = "1.0.0"
 activity = "1.10.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseDatabase = "21.0.0"
+fragmentKtx = "1.6.2"
+uiDesktop = "1.7.0"
+
 
 [libraries]
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -45,6 +54,7 @@ androidx-cardview = { group = "androidx.cardview", name = "cardview", version.re
 androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

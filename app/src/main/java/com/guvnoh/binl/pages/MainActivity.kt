@@ -1,16 +1,23 @@
-package com.guvnoh.binl
+package com.guvnoh.binl.pages
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
+import com.guvnoh.binl.App
+import com.guvnoh.binl.R
+import com.guvnoh.binl.viewmodels.ReceiptViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
+    private val mainViewModel by lazy{
+        (application as App).viewModel
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,6 +49,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.records ->{
                     replaceFragment(Records(), it.title.toString())
+                }
+                R.id.addProduct ->{
+                    replaceFragment(AddProduct(), it.title.toString())
                 }
             }
             true

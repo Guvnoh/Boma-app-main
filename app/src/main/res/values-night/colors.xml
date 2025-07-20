@@ -8,6 +8,4 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="statusBar">#258041</color>
-    <color name="button">#1B5E2A</color>
-    <color name="button2">#FFA726</color>
 </resources>

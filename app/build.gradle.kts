@@ -43,7 +43,9 @@ android {
 }
 
 dependencies {
-    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.circleimageview)
     implementation (libs.gson)
     implementation(libs.androidx.drawerlayout)
     implementation(libs.androidx.core.ktx)

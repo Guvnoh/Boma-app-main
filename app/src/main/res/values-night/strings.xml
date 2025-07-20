@@ -8,9 +8,4 @@
     <string name="products">Products</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="grand_total">Grand Total:</string>
-    <string name="zero_naira">₦0.00</string>
-    <string name="default_total">₦0.00</string>
-    <string name="default_grand_total">Grand Total: ₦0.00</string>
-    <string name="company_spinner_label">Company:</string>
 </resources>

@@ -16,4 +16,10 @@
             android:title="@string/sales_records"
             android:icon="@drawable/records_svg"/>
     </group>
+    <group>
+        <item
+            android:id="@+id/addProduct"
+            android:title="Add Product"
+            android:icon="@drawable/add_product"/>
+    </group>
 </menu>
