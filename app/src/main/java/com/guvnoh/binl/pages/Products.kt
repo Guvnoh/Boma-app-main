@@ -9,8 +9,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
+import androidx.core.view.iterator
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.database.DataSnapshot
@@ -39,10 +41,9 @@ class Products (): Fragment() {
     private var _binding: ProductsLayoutBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var dataMap: MutableMap<String, Product>
     private lateinit var display: MutableList<Product>
     private lateinit var brandData: MutableList<Product>
-    private lateinit var getDbPrices: MutableMap<String, Double>
+    //private lateinit var productCard: ProductCardLayoutBinding
 
 
     override fun onCreateView(
@@ -56,45 +57,33 @@ class Products (): Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //productCard = ProductCardLayoutBinding.inflate(layoutInflater)
         setCustomerName()
         display = mutableListOf()
         brandData = getSortedBrandData()
 
         getDatabaseProductList {
-            getUpdatedDisplayList(it, brandData)
+            updatedProductList ->
+            //Changes in price and new products present on the database that are not originally
+            //on the app are injected into the app here (requires network connection)
+            getUpdatedDisplayList(updatedProductList, brandData)
             display = brandData
 
-            if (isAdded && view != null) {  // ✅ robust guard
+            if (isAdded && view != null) {
                 loadData()
             }
 
         }
-        //loads up dataMap with products and database prices
-        // ready to send to display
-        //updates display with current data from database
 
-        // holds a list with all products,
-        // images and prices and loads them into cards
 
         binding.clearQtys.setOnClickListener {
-            clearData() // clears data in all quantity inputs, grand total and customer name
+            clearData()
+        // clears data in all quantity inputs, grand total and customer name when clicked
         }
         binding.doneBtn.setOnClickListener {
             val intent = Intent(requireContext(), Receipt::class.java)
             startActivity(intent)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        getDatabaseProductList {
-            getUpdatedDisplayList(it, brandData)
-            display = brandData
-
-            if (isAdded && view != null) {  // ✅ robust guard
-                loadData()
-            }
-
+            //opens the receipt page and sends over all necessary data for the receipt when clicked
         }
     }
 
@@ -114,6 +103,8 @@ class Products (): Fragment() {
         }
     }
 
+
+
     private fun createProductCard(product: Product, position: Int): View {
         val cardBinding = ProductCardLayoutBinding.inflate(layoutInflater)
         with(cardBinding){
@@ -122,6 +113,12 @@ class Products (): Fragment() {
                 .append("₦")
                 .append(formatter.format(product.productPrice))
             productImage.setImageResource(product.productImage)
+            for (i in vm.record.value){
+                if (i.productName == product.productName){
+                    quantityEntry.setText(i.productQty)
+                }
+            }
+            binding.sumView.setText("₦" + String.format("%,d", vm.grandTotal.value))
 
             quantityEntry.addTextChangedListener(object : TextWatcher{
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -173,17 +170,6 @@ class Products (): Fragment() {
             .append(formatter.format(vm.grandTotal.value))
     }
 
-    private fun updateGrandTotal(){
-        vm.getTotal()
-        val grandTotal = vm.grandTotal.value
-        if (grandTotal == 0) {
-            binding.sumView.text = getString(R.string.default_grand_total)
-        }else{
-            binding.sumView.text = StringBuilder()
-                .append("Grand Total: ₦")
-                .append(formatter.format(grandTotal))
-        }
-    }
     private fun clearData(){
         val customerName: EditText = binding.CustomerNameEntry
         customerName.text?.clear()

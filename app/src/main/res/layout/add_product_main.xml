@@ -3,17 +3,39 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="150dp"
+    android:layout_marginTop="80dp"
     android:padding="16dp">
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/warning"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/restart_warning"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="50dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Product Name"
-            android:background=""
+            android:textColor="@color/black"
+            android:textStyle="bold"
             android:textSize="18sp"/>
         <EditText
             android:id="@+id/inputName"
@@ -24,33 +46,42 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Product Price"
+            android:text="@string/add_product_page_product_price_label"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             android:textSize="18sp"/>
         <EditText
             android:id="@+id/inputPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Price"
-            android:layout_marginStart="20dp"/>
+            android:autofillHints=""
+            android:hint="@string/add_product_page_price_entry_hint"
+            android:layout_marginStart="20dp"
+            android:inputType="numberDecimal"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             android:text="@string/company_spinner_label"/>
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:layout_marginStart="50dp"
+            android:gravity="end"
             android:id="@+id/companySelector"/>
     </LinearLayout>
 

@@ -12,11 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="101dp"
         android:layout_margin="2dp"
-        android:background="#1034d0"
         app:cardCornerRadius="10dp"
         android:padding="2dp">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/relative_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -26,10 +25,11 @@
                 android:id="@+id/productImage"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="19dp"
-                android:layout_marginTop="25dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/hero"
                 android:background="@drawable/curved_edges"
                 android:clipToOutline="true"
                 android:scaleType="centerCrop" />
@@ -38,11 +38,10 @@
                 android:id="@+id/brandLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="7dp"
-                android:layout_marginTop="18dp"
-                android:layout_toEndOf="@+id/productImage"
-                android:text="Title"
+                app:layout_constraintTop_toTopOf="@id/productImage"
+                app:layout_constraintStart_toEndOf="@id/productImage"
+                android:layout_marginStart="5dp"
+                android:text="Hero"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="16sp"
@@ -52,73 +51,57 @@
                 android:id="@+id/priceLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/brandLabel"
-                android:layout_marginStart="6dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="12dp"
-                android:layout_marginBottom="12dp"
-                android:layout_toEndOf="@+id/productImage"
-                android:text="Title"
+                app:layout_constraintStart_toEndOf="@id/brandLabel"
+                app:layout_constraintTop_toTopOf="@id/brandLabel"
+                android:layout_marginStart="25dp"
+                android:text="₦9,000"
+                android:textStyle="bold"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="15sp"
-                app:layout_constraintStart_toEndOf="@+id/productImage"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/totalLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/individualTotalLabel"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="46dp"
-                android:text="Total"
+                app:layout_constraintTop_toBottomOf="@id/brandLabel"
+                app:layout_constraintStart_toStartOf="@id/brandLabel"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="8dp"
+                android:text="Total: "
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/individualTotalLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="197dp"
-                android:layout_marginTop="67dp"
-                android:gravity="center"
+                app:layout_constraintTop_toTopOf="@id/totalLabel"
+                app:layout_constraintStart_toEndOf="@id/totalLabel"
+                android:layout_marginStart="10dp"
                 android:text="₦0.00"
+                android:textSize="14sp"
+                android:textStyle="bold"
                 android:textColor="@color/black" />
-
-<!--            <TextView-->
-<!--                android:id="@+id/quantityLabel"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_alignParentTop="true"-->
-<!--                android:layout_alignParentEnd="true"-->
-<!--                android:layout_marginTop="35dp"-->
-<!--                android:layout_marginEnd="46dp"-->
-<!--                android:gravity="center"-->
-<!--                android:text="Quantity"-->
-<!--                android:textColor="@color/black" />-->
 
             <EditText
                 android:id="@+id/quantityEntry"
                 android:layout_width="60dp"
                 android:layout_height="36dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="53dp"
-                android:layout_marginEnd="39dp"
+                app:layout_constraintTop_toTopOf="@id/totalLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="20dp"
                 android:inputType="number|numberDecimal"
                 android:padding="5dp"
                 android:textColor="#000000"
                 android:textColorHint="@color/teal_700"
                 android:hint="0"
                 android:textStyle="italic"
+                android:maxLength="4"
                 android:background="@drawable/rounded_corner_edit_text"/>
 
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 

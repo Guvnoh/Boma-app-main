@@ -57,18 +57,6 @@ class ChangePrice : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        getDatabaseProductList {
-            getUpdatedDisplayList(it, brandData)
-            display = brandData
-
-            if (isAdded && view != null) {  // ✅ robust guard
-                populatePriceCards(display)
-            }
-
-        }
-    }
 
     private fun updatePrices() {
         val container = changePriceBinding.container

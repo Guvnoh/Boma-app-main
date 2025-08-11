@@ -22,19 +22,17 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.guvnoh.binl.App
 import com.guvnoh.binl.R
-import com.guvnoh.binl.data.ReceiptDisplay
+import com.guvnoh.binl.data.ReceiptData
+import com.guvnoh.binl.data.RecordData
+import com.guvnoh.binl.data.bomaRecords
 import com.guvnoh.binl.databinding.ReceiptCardDesignBinding
 import com.guvnoh.binl.databinding.ReceiptLayoutBinding
 import com.guvnoh.binl.formatter
-import com.guvnoh.binl.halfAndQuarter
-import java.text.DecimalFormat
 import java.time.ZonedDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import com.guvnoh.binl.viewmodels.RecordsViewModel
 import kotlin.text.StringBuilder
 
 class Receipt() : AppCompatActivity() {
@@ -43,9 +41,10 @@ class Receipt() : AppCompatActivity() {
     private lateinit var timeView: TextView
     private lateinit var grandTotal: TextView
     private lateinit var savescrnsht: Button
-    private lateinit var displayData: MutableList<ReceiptDisplay>
+    private lateinit var displayData: MutableList<ReceiptData>
     private lateinit var receiptBinding: ReceiptLayoutBinding
     private lateinit var copyBtn: Button
+    private lateinit var balanceEntry: TextView
     private val storagePermissionCode  = 1001
     private val vm by lazy{
         (application as App).viewModel
@@ -59,6 +58,8 @@ class Receipt() : AppCompatActivity() {
         val watTime = ZonedDateTime.now(watZoneId)
         val formattedDate = DateTimeFormatter.ofPattern("d-MMM-yyyy")
         val formattedTime = DateTimeFormatter.ofPattern("H:mma")
+        val dateNow = watTime.format(formattedDate).toString()
+        val timeNow = watTime.format(formattedTime).toString()
 
         savescrnsht = findViewById(R.id.savescrnsht)
         customerName = findViewById(R.id.rCustomerName)
@@ -67,59 +68,24 @@ class Receipt() : AppCompatActivity() {
         timeView = findViewById(R.id.rTime)
         dateView.text = StringBuilder()
             .append("Date: ")
-            .append(watTime.format(formattedDate).toString())
+            .append(dateNow)
         timeView.text = StringBuilder()
             .append("Time: ")
-            .append(watTime.format(formattedTime).toString())
+            .append(timeNow)
         val customer = vm.customerName.value
 
         //code below displays the main receipt layout
         ReceiptCardDesignBinding.inflate(layoutInflater)
-        // The map below holds all the data for every new receipt with the brand name as key,
-        //a quantity and total list as value e.g map = {hero: [quantity = 2, total= 18,400]}
-//        val receiptDataMap = mutableMapOf<String, MutableList<String>>()
+
         displayData= vm.getReceiptRecord()
-//        if (receipt != null ) {
-//            var len = receipt.size -1
-//            if (len>=0){
-//                while (len>-1) {
-//                    for (i in receipt) {
-//                        val productqty = formatNum(i.product_qty.toDouble())
-//                        val productname = i.product_name
-//                        val producttotal = ("₦" + formatter.format(i.product_total.toDouble()))
-//                        receiptDataMap[productname] = mutableListOf(productqty, producttotal)
-//                        len--
-//                    }
-//                }
-//            }
-//
-//        }
-        // The code block below sends the purchase data from the receiptDataMap to the receipt activity(displayData)
-//        for( (k, v) in receiptDataMap){
-//            val integerPart = (v[0]).toDouble().toInt()
-//            val floatPart = (v[0]).toDouble()
-//            val copiedQuantity: String =
-//                if (floatPart % 1 == 0.5){
-//                    if(integerPart==0){
-//                        "½"
-//                    } else "$integerPart½"
-//                }else if (floatPart % 1 == 0.25){
-//                    if(integerPart==0){
-//                        "¼"
-//                    } else "$integerPart¼"
-//                }
-//                else v[0]
-//            val copiedQuantity = halfAndQuarter(v[0].toDouble())
-//            displayData.add(ReceiptData(
-//                copiedQuantity,
-//                k,
-//                v[1],
-//            ))
+
 
         load(displayData)
-//
-//        val gtots = intent.getDoubleExtra("grandTotal", 0.00)
+
+
         val grandTotal = vm.grandTotal.value
+        balanceEntry = receiptBinding.balanceEntry
+        balanceEntry.text = "₦" + String.format("%,d", grandTotal)
 
         customerName.text = "Customer:  $customer"
         this.grandTotal.text = "₦" + formatter.format(grandTotal)
@@ -145,10 +111,15 @@ class Receipt() : AppCompatActivity() {
             Toast.makeText(this, "Text copied!", Toast.LENGTH_SHORT).show()
         }
         //receiptBinding.saveSale.setOnClickListener{saveRecord(customer, displayData)}
-        val viewModel = ViewModelProvider(this)[RecordsViewModel::class.java]
         receiptBinding.saveSale.setOnClickListener{
-            Toast.makeText(this, "Saving...", Toast.LENGTH_SHORT).show()
-//            viewModel.getNewRecord(displayData, customerName.text.toString(), grandTotal)
+
+            val newRecord = RecordData(
+                primaryKey = "$dateNow$timeNow",
+                customerName = vm.customerName.value,
+                receipt = vm.getReceiptRecord(),
+                grandTotal = vm.grandTotal.value.toString()
+            )
+            saveRecord(newRecord)
         }
     }
 
@@ -168,25 +139,15 @@ class Receipt() : AppCompatActivity() {
         }
     }
 
+    private fun saveRecord(record: RecordData){
+        bomaRecords.child(bomaRecords.push().key.toString()).setValue(record)
+        Toast.makeText(this, "Saving...", Toast.LENGTH_SHORT).show()
+    }
 
     private fun copyToClipboard(): String{
         //The variable finalText holds the complete text to be sent to the clipboard
         val finalText = StringBuilder()
-//        for ((k, v) in map){
-//            //½¼
-//            val integerPart = (v[0]).toDouble().toInt()
-//            val floatPart = (v[0]).toDouble()
-//            val copiedQuantity: String =
-//                if (floatPart % 1 == 0.5){
-//                    if(integerPart==0){
-//                        "½"
-//                    } else "$integerPart½"
-//                }else if (floatPart % 1 == 0.25){
-//                    if(integerPart==0){
-//                        "¼"
-//                    } else "$integerPart¼"
-//                }else v[0]
-//            val textToCopy: String = "$copiedQuantity $k ${v[1]}\n"
+
         for (i in vm.getReceiptRecord()){
             val copiedQuantity: String = i.productQty
             val textToCopy = "$copiedQuantity ${i.productName} ${i.productTotal}\n"
@@ -248,37 +209,55 @@ class Receipt() : AppCompatActivity() {
         return "failed to save screenshot"
     }
 
-    private fun createReceiptData(data: ReceiptDisplay, index: Int): View {
+    private fun createReceiptData(data: ReceiptData, index: Int): View {
         val cardBinding = ReceiptCardDesignBinding.inflate(layoutInflater)
         with(cardBinding) {
-            Totallabel.text = data.productTotal
+            Totallabel.text = data.productTotalString
             label.text = data.productName
             kwantity.text = data.productQty
 
         }
         return  cardBinding.root
     }
-    private fun getBalance(grandTotal:Int){
-        val balanceEntry: TextView = findViewById(R.id.balance_entry)
+    private fun getBalance(grandTotal:Int) {
+        var rawInput: Int = 0
         val amtPaidEntry: EditText = findViewById(R.id.amt_paid_entry)
+        val balanceEntry: TextView = findViewById(R.id.balance_entry)
         amtPaidEntry.addTextChangedListener(object : TextWatcher {
+            private var current = ""
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
-                val paidAmount: Int = try {
-                    p0?.toString()?.toInt()!!
-                }catch (e: NumberFormatException){
-                    0
+                if (p0.toString() != current) {
+                    amtPaidEntry.removeTextChangedListener(this)
+                    val cleanString = p0
+                        .toString()
+                        .replace("₦", "")
+                        .replace(",", "")
+                        .trim()
+                    if (cleanString.isNotEmpty()) {
+                        try {
+                            rawInput = cleanString.toInt()
+                            val formatted = "₦" + String.format("%,d", rawInput)
+                            current = formatted
+                            amtPaidEntry.setText(formatted)
+                            amtPaidEntry.setSelection(formatted.length)
+                        } catch (e: NumberFormatException) {
+                            e.printStackTrace()
+                        }
+                    } else {
+                        current = ""
+                        rawInput = 0
+                        amtPaidEntry.setText("")
+                    }
+                    val balance = grandTotal - rawInput
+                    balanceEntry.text = "₦" + String.format("%,d", balance)
+                    amtPaidEntry.addTextChangedListener(this)
                 }
-                val balance: Int = grandTotal - paidAmount
-                balanceEntry.text = String.format("₦$balance")
-
-
             }
         })
-
     }
-    private fun load(display: MutableList<ReceiptDisplay>) {
+    private fun load(display: MutableList<ReceiptData>) {
         display.forEachIndexed { index, product ->
             val receiptData = createReceiptData(product, index)
             receiptBinding.receiptContainer.addView(receiptData)

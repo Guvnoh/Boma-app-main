@@ -7,52 +7,77 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.guvnoh.binl.databinding.ReceiptCardDesignBinding
-import com.guvnoh.binl.databinding.RecordLayoutBinding
-import androidx.fragment.app.activityViewModels
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.guvnoh.binl.App
+import com.guvnoh.binl.R
 import com.guvnoh.binl.data.ReceiptData
-import com.guvnoh.binl.viewmodels.ReceiptViewModel
-import com.guvnoh.binl.viewmodels.RecordsViewModel
+import com.guvnoh.binl.data.RecordData
+import com.guvnoh.binl.data.bomaRecords
+import com.guvnoh.binl.databinding.RecordCardLayoutBinding
+import com.guvnoh.binl.databinding.RecordsBinding
 
 
 class Records: Fragment() {
-    private lateinit var binding: RecordLayoutBinding
-    private val recordsViewModel: RecordsViewModel by activityViewModels()
+    private lateinit var binding: RecordsBinding
+    private val vm by lazy{
+        (requireActivity().application as App).viewModel
+    }
     override fun onCreateView(
 
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = RecordLayoutBinding.inflate(inflater, container, false)
+        binding = RecordsBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getRecord()
+        displayRecords()
     }
 
-    private fun createRecord(data: ReceiptData, index: Int): View {
+
+    private fun displayRecordReceipt(data: ReceiptData, index: Int): View {
         val cardBinding = ReceiptCardDesignBinding.inflate(layoutInflater)
         with(cardBinding) {
-            Totallabel.text = data.productTotal.toString()
+            Totallabel.text = String.format(data.productTotal.toString())
             label.text = data.productName
             kwantity.text = data.productQty
 
         }
         return  cardBinding.root
     }
-    private fun getRecord(){
-        val receipt = ReceiptViewModel(application = Application())
-        val record = receipt.record.value
-        //val recordList = record.value
-        val customer = "Customer: ${receipt.customerName}"
-        val grandTotal = receipt.grandTotal.value
-        binding.customerName.text = customer
-        binding.rGrandTotal.text = String.format(grandTotal.toString())
-        record.forEachIndexed{ index, receiptData ->
-            val recordEntry = createRecord(receiptData, index)
-            binding.recordContainer.addView(recordEntry)
+
+    private fun createRecordsDisplay(data: RecordData): View {
+        val recordCardBinding = RecordCardLayoutBinding.inflate(layoutInflater)
+        with(recordCardBinding) {
+            ref.text = data.primaryKey
+            customerName.text = data.customerName
+            rGrandTotal.text = data.grandTotal
         }
+        return recordCardBinding.root
     }
+
+    private fun displayRecords(){
+
+        bomaRecords.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val records = snapshot.children.mapNotNull { it.getValue(RecordData::class.java) }
+                for (record in records.asReversed()){
+
+                    if (record!=null) {
+                        val recordView = createRecordsDisplay(record)
+                        binding.containerLinearLayout.addView(recordView)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+
+        })
+    }
+
 }

@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 val dataBase: FirebaseDatabase = FirebaseDatabase.getInstance()
 val firstBranch : DatabaseReference = dataBase.reference.child("Boma")
 val bomaBrands: DatabaseReference = firstBranch.child("bomaPrices")
+val bomaRecords: DatabaseReference = firstBranch.child("bomaRecords")
 
 
 fun getDatabaseProductList(callback: (MutableList<Product>) -> Unit) {

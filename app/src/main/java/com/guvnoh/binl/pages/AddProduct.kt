@@ -90,7 +90,9 @@ class AddProduct: Fragment() {
                     .child(newProduct.productName)
                     .setValue(listOf(newProduct.productPrice, companySelected))
             }
-            Toast.makeText(requireContext(), "Product added!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Product added.\nPlease restart app!", Toast.LENGTH_LONG).show()
+            brandName.text.clear()
+            productPrice.text.clear()
         }
 
 

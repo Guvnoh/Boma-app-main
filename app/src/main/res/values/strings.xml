@@ -13,4 +13,8 @@
     <string name="default_total">₦0.00</string>
     <string name="default_grand_total">Grand Total: ₦0.00</string>
     <string name="company_spinner_label">Company:</string>
+    <string name="restart_warning">Please note, an app restart is required after adding new products.</string>
+    <string name="add_product_page_price_entry_hint">Enter Price</string>
+    <string name="add_product_page_product_price_label">Product Price (₦)</string>
+    <string name="naira_sign">₦</string>
 </resources>
