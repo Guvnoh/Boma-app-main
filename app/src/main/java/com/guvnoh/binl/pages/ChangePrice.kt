@@ -1,4 +1,5 @@
 package com.guvnoh.binl.pages
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -6,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.compose.material3.AlertDialog
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.guvnoh.binl.data.Product
@@ -50,11 +53,28 @@ class ChangePrice : Fragment() {
             }
 
             changePriceBinding.doneChanging.setOnClickListener {
-                updatePrices()
-                updateDatabase()
-                Toast.makeText(requireContext(), "Prices Updated!", Toast.LENGTH_SHORT).show()
+                priceChangeAlert()
             }
         }
+    }
+    private fun changePrice(){
+        updatePrices()
+        updateDatabase()
+        Toast.makeText(requireContext(), "Prices Updated!", Toast.LENGTH_SHORT).show()
+    }
+    private fun priceChangeAlert(){
+        val alert = AlertDialog.Builder(requireContext())
+        alert.setTitle("Price Change!")
+            .setMessage("You're about to change product prices, are you sure?")
+            .setCancelable(false)
+            .setIcon(R.drawable.warning)
+            .setNegativeButton("No") { dialogInterface, _ ->
+                dialogInterface.cancel()
+            }
+            .setPositiveButton("Yes") { _, _  ->
+                changePrice()
+            }
+        alert.create().show()
     }
 
 

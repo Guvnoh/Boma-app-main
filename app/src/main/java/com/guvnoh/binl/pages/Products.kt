@@ -9,17 +9,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
-import androidx.core.view.iterator
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.guvnoh.binl.App
 import com.guvnoh.binl.data.Product
 import com.guvnoh.binl.R
@@ -43,7 +36,6 @@ class Products (): Fragment() {
 
     private lateinit var display: MutableList<Product>
     private lateinit var brandData: MutableList<Product>
-    //private lateinit var productCard: ProductCardLayoutBinding
 
 
     override fun onCreateView(
@@ -69,9 +61,7 @@ class Products (): Fragment() {
             getUpdatedDisplayList(updatedProductList, brandData)
             display = brandData
 
-            if (isAdded && view != null) {
-                loadData()
-            }
+            loadData()
 
         }
 

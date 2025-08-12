@@ -1,6 +1,5 @@
 package com.guvnoh.binl.pages
 
-import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.guvnoh.binl.App
-import com.guvnoh.binl.R
 import com.guvnoh.binl.data.ReceiptData
 import com.guvnoh.binl.data.RecordData
 import com.guvnoh.binl.data.bomaRecords
@@ -67,11 +65,9 @@ class Records: Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val records = snapshot.children.mapNotNull { it.getValue(RecordData::class.java) }
                 for (record in records.asReversed()){
+                    val recordView = createRecordsDisplay(record)
+                    binding.containerLinearLayout.addView(recordView)
 
-                    if (record!=null) {
-                        val recordView = createRecordsDisplay(record)
-                        binding.containerLinearLayout.addView(recordView)
-                    }
                 }
             }
 

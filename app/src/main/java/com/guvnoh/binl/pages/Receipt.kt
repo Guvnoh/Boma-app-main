@@ -35,12 +35,12 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.text.StringBuilder
 
-class Receipt() : AppCompatActivity() {
+class Receipt: AppCompatActivity() {
     private lateinit var customerName: TextView
     private lateinit var dateView: TextView
     private lateinit var timeView: TextView
     private lateinit var grandTotal: TextView
-    private lateinit var savescrnsht: Button
+    private lateinit var saveScreenshot: Button
     private lateinit var displayData: MutableList<ReceiptData>
     private lateinit var receiptBinding: ReceiptLayoutBinding
     private lateinit var copyBtn: Button
@@ -61,7 +61,7 @@ class Receipt() : AppCompatActivity() {
         val dateNow = watTime.format(formattedDate).toString()
         val timeNow = watTime.format(formattedTime).toString()
 
-        savescrnsht = findViewById(R.id.savescrnsht)
+        saveScreenshot = findViewById(R.id.savescrnsht)
         customerName = findViewById(R.id.rCustomerName)
         grandTotal = findViewById(R.id.rGrandTotal)
         dateView = findViewById(R.id.rDate)
@@ -85,14 +85,20 @@ class Receipt() : AppCompatActivity() {
 
         val grandTotal = vm.grandTotal.value
         balanceEntry = receiptBinding.balanceEntry
-        balanceEntry.text = "₦" + String.format("%,d", grandTotal)
+        balanceEntry.text = StringBuilder()
+            .append(R.string.naira_sign)
+            .append(formatter.format(grandTotal))
 
-        customerName.text = "Customer:  $customer"
-        this.grandTotal.text = "₦" + formatter.format(grandTotal)
+        customerName.text = StringBuilder()
+            .append("Customer: $customer")
+
+        this.grandTotal.text = StringBuilder()
+            .append(R.string.naira_sign)
+            .append(formatter.format(grandTotal))
 
         getBalance(grandTotal)
 
-        savescrnsht.setOnClickListener{
+        saveScreenshot.setOnClickListener{
             if (hasStoragePermission(this)){
                 val rootView = window.decorView.findViewById<View>(android.R.id.content)
                 val bitmap = takeScreenshot(rootView)
@@ -150,7 +156,7 @@ class Receipt() : AppCompatActivity() {
 
         for (i in vm.getReceiptRecord()){
             val copiedQuantity: String = i.productQty
-            val textToCopy = "$copiedQuantity ${i.productName} ${i.productTotal}\n"
+            val textToCopy = "$copiedQuantity ${i.productName} ${i.productTotalString}\n"
 
             finalText.append(textToCopy)
         }
@@ -209,7 +215,7 @@ class Receipt() : AppCompatActivity() {
         return "failed to save screenshot"
     }
 
-    private fun createReceiptData(data: ReceiptData, index: Int): View {
+    private fun createReceiptData(data: ReceiptData): View {
         val cardBinding = ReceiptCardDesignBinding.inflate(layoutInflater)
         with(cardBinding) {
             Totallabel.text = data.productTotalString
@@ -220,7 +226,7 @@ class Receipt() : AppCompatActivity() {
         return  cardBinding.root
     }
     private fun getBalance(grandTotal:Int) {
-        var rawInput: Int = 0
+        var rawInput = 0
         val amtPaidEntry: EditText = findViewById(R.id.amt_paid_entry)
         val balanceEntry: TextView = findViewById(R.id.balance_entry)
         amtPaidEntry.addTextChangedListener(object : TextWatcher {
@@ -238,8 +244,10 @@ class Receipt() : AppCompatActivity() {
                     if (cleanString.isNotEmpty()) {
                         try {
                             rawInput = cleanString.toInt()
-                            val formatted = "₦" + String.format("%,d", rawInput)
-                            current = formatted
+                            val formatted = StringBuilder()
+                                .append(R.string.naira_sign)
+                                .append(formatter.format(rawInput))
+                            current = formatted.toString()
                             amtPaidEntry.setText(formatted)
                             amtPaidEntry.setSelection(formatted.length)
                         } catch (e: NumberFormatException) {
@@ -251,15 +259,17 @@ class Receipt() : AppCompatActivity() {
                         amtPaidEntry.setText("")
                     }
                     val balance = grandTotal - rawInput
-                    balanceEntry.text = "₦" + String.format("%,d", balance)
+                    balanceEntry.text = StringBuilder()
+                        .append(R.string.naira_sign)
+                        .append(formatter.format(balance))
                     amtPaidEntry.addTextChangedListener(this)
                 }
             }
         })
     }
     private fun load(display: MutableList<ReceiptData>) {
-        display.forEachIndexed { index, product ->
-            val receiptData = createReceiptData(product, index)
+        display.forEach{ product ->
+            val receiptData = createReceiptData(product)
             receiptBinding.receiptContainer.addView(receiptData)
 
         }

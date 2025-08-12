@@ -11,11 +11,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.compose.material3.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.guvnoh.binl.data.Product
 import com.guvnoh.binl.data.bomaBrands
+import com.guvnoh.binl.data.cans
 import com.guvnoh.binl.databinding.AddProductMainBinding
 
 class AddProduct: Fragment() {
@@ -72,29 +75,55 @@ class AddProduct: Fragment() {
                 companySelected = selectedItem
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
         addButton.setOnClickListener {
+            addProductAlert(
+                name = brandName.text.toString(),
+                price = productPrice.text.toString(),
+                company = companySelected)
 
-            if (brandName.text.isNotBlank() &&
-                productPrice.text.isNotBlank()){
-                val newProduct = Product(
-                    brandName.text.toString(),
-                    productPrice.text.toString().toDouble(),
-                    category = companySelected
-                )
-                bomaBrands
-                    .child(newProduct.productName)
-                    .setValue(listOf(newProduct.productPrice, companySelected))
-            }
-            Toast.makeText(requireContext(), "Product added.\nPlease restart app!", Toast.LENGTH_LONG).show()
-            brandName.text.clear()
-            productPrice.text.clear()
         }
 
+
+    }
+
+    private fun addProductAlert(
+        name: String,
+        price: String,
+        company: String
+    ){
+        if (brandName.text.isNotBlank() &&
+            productPrice.text.isNotBlank()){
+            val alert = AlertDialog.Builder(requireContext())
+            alert.setTitle("Add New Product?")
+                .setCancelable(false)
+                .setMessage("Do you want to add;\nproduct: $name\nprice: $price\nto the database?")
+                .setNegativeButton("No"){dialogInterface, _ ->
+                    dialogInterface.cancel()
+                }
+                .setPositiveButton("Yes") {_,_ ->
+                    addProduct(company)
+                }
+            alert.create().show()
+        }else Toast.makeText(requireContext(), "Please enter name and price!", Toast.LENGTH_SHORT).show()
+
+
+    }
+
+    private fun addProduct(company: String){
+        val newProduct = Product(
+            brandName.text.toString(),
+            productPrice.text.toString().toDouble(),
+            category = company,
+        )
+        bomaBrands
+            .child(newProduct.productName)
+            .setValue(listOf(newProduct.productPrice, company))
+        Toast.makeText(requireContext(), "Product added.\nPlease restart app!", Toast.LENGTH_LONG).show()
+        brandName.text.clear()
+        productPrice.text.clear()
 
     }
 }
