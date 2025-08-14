@@ -29,7 +29,8 @@ import com.guvnoh.binl.data.RecordData
 import com.guvnoh.binl.data.bomaRecords
 import com.guvnoh.binl.databinding.ReceiptCardDesignBinding
 import com.guvnoh.binl.databinding.ReceiptLayoutBinding
-import com.guvnoh.binl.formatter
+import com.guvnoh.binl.data.formatter
+import com.guvnoh.binl.data.getFormattedTotal
 import java.time.ZonedDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -39,7 +40,7 @@ class Receipt: AppCompatActivity() {
     private lateinit var customerName: TextView
     private lateinit var dateView: TextView
     private lateinit var timeView: TextView
-    private lateinit var grandTotal: TextView
+    private lateinit var grandTotalView: TextView
     private lateinit var saveScreenshot: Button
     private lateinit var displayData: MutableList<ReceiptData>
     private lateinit var receiptBinding: ReceiptLayoutBinding
@@ -63,9 +64,12 @@ class Receipt: AppCompatActivity() {
 
         saveScreenshot = findViewById(R.id.savescrnsht)
         customerName = findViewById(R.id.rCustomerName)
-        grandTotal = findViewById(R.id.rGrandTotal)
+        grandTotalView = findViewById(R.id.rGrandTotal)
         dateView = findViewById(R.id.rDate)
         timeView = findViewById(R.id.rTime)
+        copyBtn = findViewById(R.id.copyReceipt)
+        balanceEntry = receiptBinding.balanceEntry
+
         dateView.text = StringBuilder()
             .append("Date: ")
             .append(dateNow)
@@ -77,24 +81,20 @@ class Receipt: AppCompatActivity() {
         //code below displays the main receipt layout
         ReceiptCardDesignBinding.inflate(layoutInflater)
 
-        displayData= vm.getReceiptRecord()
+        displayData= vm.record.value
 
 
         load(displayData)
 
 
         val grandTotal = vm.grandTotal.value
-        balanceEntry = receiptBinding.balanceEntry
-        balanceEntry.text = StringBuilder()
-            .append(R.string.naira_sign)
-            .append(formatter.format(grandTotal))
+
+        balanceEntry.text = getFormattedTotal(vm.grandTotal.value.toDouble())
 
         customerName.text = StringBuilder()
             .append("Customer: $customer")
 
-        this.grandTotal.text = StringBuilder()
-            .append(R.string.naira_sign)
-            .append(formatter.format(grandTotal))
+        grandTotalView.text = getFormattedTotal(grandTotal.toDouble())
 
         getBalance(grandTotal)
 
@@ -108,21 +108,22 @@ class Receipt: AppCompatActivity() {
                     requestStoragePermission(this)
             }
         }
-        val textToCopy = copyToClipboard()
-        copyBtn = findViewById(R.id.copyReceipt)
+
         copyBtn.setOnClickListener{
+            val textToCopy = copyToClipboard()
             val clipBoard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("label", textToCopy)
             clipBoard.setPrimaryClip(clip)
             Toast.makeText(this, "Text copied!", Toast.LENGTH_SHORT).show()
         }
-        //receiptBinding.saveSale.setOnClickListener{saveRecord(customer, displayData)}
+
+
         receiptBinding.saveSale.setOnClickListener{
 
             val newRecord = RecordData(
                 primaryKey = "$dateNow$timeNow",
                 customerName = vm.customerName.value,
-                receipt = vm.getReceiptRecord(),
+                receipt = vm.record.value,
                 grandTotal = vm.grandTotal.value.toString()
             )
             saveRecord(newRecord)
@@ -154,14 +155,14 @@ class Receipt: AppCompatActivity() {
         //The variable finalText holds the complete text to be sent to the clipboard
         val finalText = StringBuilder()
 
-        for (i in vm.getReceiptRecord()){
+        for (i in vm.record.value){
             val copiedQuantity: String = i.productQty
             val textToCopy = "$copiedQuantity ${i.productName} ${i.productTotalString}\n"
 
             finalText.append(textToCopy)
         }
         if (vm.record.value.size>1){
-            finalText.append("Total: ${grandTotal.text}")
+            finalText.append("Total: ${grandTotalView.text}")
         }
 
         return finalText.toString()
@@ -226,7 +227,7 @@ class Receipt: AppCompatActivity() {
         return  cardBinding.root
     }
     private fun getBalance(grandTotal:Int) {
-        var rawInput = 0
+        var rawInput = 0 //input before formatting (needed for calculations)
         val amtPaidEntry: EditText = findViewById(R.id.amt_paid_entry)
         val balanceEntry: TextView = findViewById(R.id.balance_entry)
         amtPaidEntry.addTextChangedListener(object : TextWatcher {
@@ -244,10 +245,8 @@ class Receipt: AppCompatActivity() {
                     if (cleanString.isNotEmpty()) {
                         try {
                             rawInput = cleanString.toInt()
-                            val formatted = StringBuilder()
-                                .append(R.string.naira_sign)
-                                .append(formatter.format(rawInput))
-                            current = formatted.toString()
+                            val formatted = getFormattedTotal(rawInput.toDouble())
+                            current = formatted
                             amtPaidEntry.setText(formatted)
                             amtPaidEntry.setSelection(formatted.length)
                         } catch (e: NumberFormatException) {
@@ -259,9 +258,7 @@ class Receipt: AppCompatActivity() {
                         amtPaidEntry.setText("")
                     }
                     val balance = grandTotal - rawInput
-                    balanceEntry.text = StringBuilder()
-                        .append(R.string.naira_sign)
-                        .append(formatter.format(balance))
+                    balanceEntry.text = getFormattedTotal(balance.toDouble())
                     amtPaidEntry.addTextChangedListener(this)
                 }
             }

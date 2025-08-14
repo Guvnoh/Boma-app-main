@@ -22,12 +22,13 @@ import com.guvnoh.binl.data.getSortedBrandData
 import com.guvnoh.binl.data.getUpdatedDisplayList
 import com.guvnoh.binl.databinding.ProductCardLayoutBinding
 import com.guvnoh.binl.databinding.ProductsLayoutBinding
-import com.guvnoh.binl.formatter
-import com.guvnoh.binl.halfAndQuarter
+import com.guvnoh.binl.data.formatter
+import com.guvnoh.binl.data.getFormattedTotal
+import com.guvnoh.binl.data.halfAndQuarter
 import kotlinx.coroutines.launch
-import java.lang.StringBuilder
+import kotlin.text.StringBuilder
 
-class Products (): Fragment() {
+class Products: Fragment() {
     private val vm by lazy{
         (requireActivity().application as App).viewModel
     }
@@ -94,8 +95,7 @@ class Products (): Fragment() {
     }
 
 
-
-    private fun createProductCard(product: Product, position: Int): View {
+    private fun createProductCard(product: Product): View {
         val cardBinding = ProductCardLayoutBinding.inflate(layoutInflater)
         with(cardBinding){
             brandLabel.text = product.productName
@@ -108,7 +108,8 @@ class Products (): Fragment() {
                     quantityEntry.setText(i.productQty)
                 }
             }
-            binding.sumView.setText("₦" + String.format("%,d", vm.grandTotal.value))
+            binding.sumView.text = StringBuilder()
+                .append("Grand Total: ${getFormattedTotal(vm.grandTotal.value.toDouble())}").toString()
 
             quantityEntry.addTextChangedListener(object : TextWatcher{
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -128,18 +129,20 @@ class Products (): Fragment() {
                 val productQuantity = input.toDouble()
 
                 val productTotal = productQuantity * productPrice
-//                calculationResults[position] = productTotal
+
+                val productTotalString = getFormattedTotal(productTotal)
 
                 cardItemLayoutBinding.individualTotalLabel.text = StringBuilder()
                     .append("₦")
-                    .append(formatter.format(productTotal))
+                    .append(productTotalString)
                 val drinkName = cardItemLayoutBinding.brandLabel.text.toString()
                 vm.record.value.removeAll{it.productName == drinkName}
                 vm.addReceiptItem(
                     ReceiptData(
-                    productQty = halfAndQuarter(productQuantity),
-                    productTotal = productTotal,
-                    productName = drinkName
+                        productQty = halfAndQuarter(productQuantity),
+                        productTotal = productTotal,
+                        productName = drinkName,
+                        productTotalString = productTotalString
                 )
                 )
             }catch (e: NumberFormatException){
@@ -155,9 +158,8 @@ class Products (): Fragment() {
             cardItemLayoutBinding.individualTotalLabel.text = getString(R.string.default_total)
         }
         vm.getTotal()
-        binding.sumView.text  = StringBuilder()
-            .append("Grand Total: ₦")
-            .append(formatter.format(vm.grandTotal.value))
+        val grandTotal = vm.grandTotal.value
+        binding.sumView.text  = getFormattedTotal(grandTotal.toDouble())
     }
 
     private fun clearData(){
@@ -174,8 +176,8 @@ class Products (): Fragment() {
     }
     private fun loadData(){
         binding.container.removeAllViews()
-        display.forEachIndexed{index, product ->
-            val productCard = createProductCard(product, index)
+        display.forEach{product ->
+            val productCard = createProductCard(product)
             binding.container.addView(productCard)
         }
     }

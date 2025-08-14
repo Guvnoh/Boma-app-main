@@ -182,7 +182,7 @@
                     app:layout_constraintTop_toTopOf="@id/paid_and_balance"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="8dp"
-                    android:text="Paid ₦"
+                    android:text="Paid:"
                     android:textSize="18sp"
                     android:textColor="@color/black"/>
 
@@ -190,7 +190,7 @@
                     android:id="@+id/amt_paid_entry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="amount paid"
+                    android:hint="Amount paid"
                     android:inputType="number"
                     app:layout_constraintStart_toEndOf="@id/amt_paid_label"
                     app:layout_constraintTop_toTopOf="@id/paid_and_balance" />
@@ -202,7 +202,7 @@
                     app:layout_constraintTop_toBottomOf="@id/amt_paid_label"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="10dp"
-                    android:text="Balance"
+                    android:text="Balance:"
                     android:textSize="18sp"
                     android:textColor="@color/black"/>
                 <TextView
@@ -212,8 +212,7 @@
                     app:layout_constraintTop_toBottomOf="@id/amt_paid_label"
                     app:layout_constraintStart_toEndOf="@id/balance_label"
                     android:textSize="18sp"
-                    android:text="balance"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="5dp"
                     android:layout_marginTop="10dp"/>
                 <EditText
                     android:id="@+id/comments"
